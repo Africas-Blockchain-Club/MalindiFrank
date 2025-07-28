@@ -1,4 +1,3 @@
-// src/App.js
 import { useState } from "react";
 import { ethers } from "ethers";
 import $u from "./utils/$u.js";
