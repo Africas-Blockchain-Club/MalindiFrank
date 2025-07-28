@@ -1,14 +1,13 @@
 // src/App.js
-import { useState } from 'react';
-import  {ethers}  from "ethers";
-// import $u from './utils/$u.js';
-import VendingMachineContract from './contract/VendingMachine.json';
+import { useState } from "react";
+import { ethers } from "ethers";
+import $u from "./utils/$u.js";
+import Contract from "./contract/VendingMachine.json";
 
 function App() {
   const [account, setAccount] = useState(null);
   const [vendingBalance, setVendingBalance] = useState("0");
   const [contract, setContract] = useState(null);
-
 
   const connectWallet = async () => {
     if (!window.ethereum) {
@@ -17,30 +16,33 @@ function App() {
     }
 
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+      const provider = new ethers.providers.Web3Provider(
+        window.ethereum,
+        "any"
+      );
       await provider.send("eth_requestAccounts", []);
 
       const signer = provider.getSigner();
       const address = await signer.getAddress();
 
       const network = await provider.getNetwork();
-      if (network.chainId !== 534351) { 
+      if (network.chainId !== 534351) {
         alert("Please switch to Scroll Sepolia");
         return;
       }
 
       const ethBalance = await provider.getBalance(address);
-      // const formattedBalance = $u.moveDecimalLeft(ethBalance.toString(), 18); 
+      const formattedBalance = $u.moveDecimalLeft(ethBalance.toString(), 18);
 
       setAccount({
         address,
-        balance: ethBalance.toString(),
-        chainId: network.chainId
+        balance: formattedBalance,
+        chainId: network.chainId,
       });
 
       const vending = new ethers.Contract(
         "0x419f4da9c4c1D5d82487718e55DFA12202690B9a",
-        VendingMachineContract,
+        Contract,
         signer
       );
 
@@ -66,7 +68,7 @@ function App() {
       console.error("Restock failed:", err);
     }
   };
-const purchaseDonuts = async () => {
+  const purchaseDonuts = async () => {
     if (!contract || !account) return;
 
     try {
@@ -87,11 +89,13 @@ const purchaseDonuts = async () => {
       <h1>Vending Machine App</h1>
       {account ? (
         <div>
-          <p>Connected: {account.address}</p>
-          <p>Balance: {account.balance} ETH</p>
+          <p>Connected Account Address: {account.address}</p>
+          <p>Account Balance: {account.balance} ETH</p>
           <p>Vending Machine Balance: {vendingBalance}</p>
-          <button onClick={restockVendingMachine}>Restock Vending Machine</button>
-          <button onClick={purchaseDonuts}>Purchase Donuts</button>
+          <button onClick={restockVendingMachine}>
+            Restock Vending Machine
+          </button>
+          <button onClick={purchaseDonuts}>Purchase Chocoloate</button>
         </div>
       ) : (
         <button onClick={connectWallet}>Connect Wallet</button>
@@ -101,4 +105,3 @@ const purchaseDonuts = async () => {
 }
 
 export default App;
-
