@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ethers } from "ethers";
-import $u from "./utils/$u.js";
+import format from "./utils/format.js";
 import Contract from "./contract/VendingMachine.json";
 
 function App() {
@@ -31,7 +31,7 @@ function App() {
       }
 
       const ethBalance = await provider.getBalance(address);
-      const formattedBalance = $u.moveDecimalLeft(ethBalance.toString(), 18);
+      const formattedBalance = format.moveDecimalLeft(ethBalance.toString(), 18);
 
       setAccount({
         address,
